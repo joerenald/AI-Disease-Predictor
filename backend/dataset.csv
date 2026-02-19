@@ -1,0 +1,9 @@
+fever,cough,headache,fatigue,body_pain,sore_throat,diarrhea,nausea,disease
+1,1,1,1,1,1,0,0,Flu
+1,1,0,1,0,1,0,0,Cold
+0,0,1,1,0,0,1,1,Food Poisoning
+1,0,1,1,1,0,0,0,Dengue
+0,1,0,0,0,1,0,0,Allergy
+1,1,1,1,1,0,0,0,Malaria
+0,0,0,1,0,0,1,1,Gastritis
+1,0,0,1,1,0,0,0,Viral Fever

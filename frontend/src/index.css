@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+/* smoother fonts */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+html {
+  scroll-behavior: smooth;
+}
+/* ===== PRINT REPORT MODE ===== */
+@media print {
+
+  /* Hide navbar */
+  #site-navbar {
+    display: none !important;
+  }
+
+  /* Remove gradient background */
+  body {
+    background: white !important;
+  }
+
+  /* Remove buttons */
+  button {
+    display: none !important;
+  }
+
+  /* Remove page glow effects */
+  .blur-3xl {
+    display: none !important;
+  }
+
+  /* Center the report */
+  main {
+    max-width: 900px !important;
+    margin: auto !important;
+    padding: 0 !important;
+  }
+
+  /* Remove shadows and glass effects */
+  .shadow-2xl,
+  .shadow-xl,
+  .shadow-lg {
+    box-shadow: none !important;
+  }
+
+  /* Improve text contrast for printing */
+  * {
+    color: black !important;
+  }
+
+}
