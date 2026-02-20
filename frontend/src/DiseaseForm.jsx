@@ -15,35 +15,36 @@ function DiseaseForm() {
   });
 
   const [result, setResult] = useState("");
+  const [loading, setLoading] = useState(false);
 
+  // handle dropdown change
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: parseInt(e.target.value)
+      [e.target.name]: Number(e.target.value)
     });
   };
 
+  // form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setResult("");
 
     try {
       const API_URL = "https://ai-disease-predictor-tjnu.onrender.com/predict";
 
-axios.post(API_URL, formData)
-  .then((response) => {
-    setResult(response.data.prediction);
-  })
-  .catch((error) => {
-    console.error(error);
-    alert("Server connected but prediction failed");
-  });
+      const response = await axios.post(API_URL, formData);
 
-
-      setResult(response.data.predicted_disease);
+      // IMPORTANT: backend returns "prediction"
+      setResult(response.data.prediction);
 
     } catch (error) {
-      alert("Backend not connected!");
+      console.error(error);
+      alert("Flask server is not responding. Please wait 30 seconds and try again.");
     }
+
+    setLoading(false);
   };
 
   return (
@@ -54,25 +55,42 @@ axios.post(API_URL, formData)
 
         {Object.keys(formData).map((symptom) => (
           <div key={symptom} style={{ margin: "10px" }}>
-            <label>{symptom.replace("_", " ")}: </label>
+            <label htmlFor={symptom}>
+              {symptom.replace("_", " ")}:
+            </label>
 
-            <select name={symptom} onChange={handleChange}>
-              <option value="0">No</option>
-              <option value="1">Yes</option>
+            <select
+              id={symptom}
+              name={symptom}
+              value={formData[symptom]}
+              onChange={handleChange}
+            >
+              <option value={0}>No</option>
+              <option value={1}>Yes</option>
             </select>
 
           </div>
         ))}
 
         <button type="submit" style={{ marginTop: "20px", padding: "10px" }}>
-          Predict Disease
+          {loading ? "Analyzing..." : "Predict Disease"}
         </button>
       </form>
 
+      {/* Result Box */}
       {result && (
-        <h2 style={{ color: "green", marginTop: "20px" }}>
-          Predicted Disease: {result}
-        </h2>
+        <div style={{
+          marginTop: "30px",
+          padding: "15px",
+          border: "2px solid green",
+          display: "inline-block",
+          borderRadius: "10px",
+          backgroundColor: "#eaffea"
+        }}>
+          <h2 style={{ color: "green" }}>
+            Predicted Disease: {result}
+          </h2>
+        </div>
       )}
 
     </div>
