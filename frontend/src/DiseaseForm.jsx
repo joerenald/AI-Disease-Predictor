@@ -27,10 +27,17 @@ function DiseaseForm() {
     e.preventDefault();
 
     try {
-      const response = await axios.post(
-        "https://disease-prediction-api.onrender.com/predict",
-        formData
-      );
+      const API_URL = "https://ai-disease-predictor-tjnu.onrender.com/predict";
+
+axios.post(API_URL, formData)
+  .then((response) => {
+    setResult(response.data.prediction);
+  })
+  .catch((error) => {
+    console.error(error);
+    alert("Server connected but prediction failed");
+  });
+
 
       setResult(response.data.predicted_disease);
 
