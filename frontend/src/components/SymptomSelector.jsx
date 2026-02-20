@@ -36,7 +36,7 @@ function SymptomSelector() {
     });
 
     try {
-      const res = await axios.post("http://127.0.0.1:5000/predict", formData);
+      const res = await axios.post("https://ai-disease-predictor-tjnu.onrender.com/", formData);
 
       navigate("/result", { state: { disease: res.data.predicted_disease } });
     } catch (error) {
