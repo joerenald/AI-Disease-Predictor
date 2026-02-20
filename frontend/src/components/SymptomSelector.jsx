@@ -27,24 +27,35 @@ function SymptomSelector() {
   };
 
   const handleSubmit = async () => {
-    setLoading(true);
+  setLoading(true);
 
-    // Convert to backend format
-    let formData = {};
-    symptomsList.forEach((sym) => {
-      formData[sym] = selected[sym] ? 1 : 0;
-    });
+  // prepare data correctly
+  const formData = {};
+  symptomsList.forEach((sym) => {
+    formData[sym] = selected[sym] ? 1 : 0;
+  });
 
-    try {
-      const res = await axios.post("https://ai-disease-predictor-tjnu.onrender.com/", formData);
+  try {
+    const res = await axios.post(
+      "https://ai-disease-predictor-tjnu.onrender.com/predict",
+      formData,
+      {
+        headers: { "Content-Type": "application/json" }
+      }
+    );
 
-      navigate("/result", { state: { disease: res.data.predicted_disease } });
-    } catch (error) {
-      alert("Flask server not running!");
-    }
+    console.log("Response:", res.data);
 
-    setLoading(false);
-  };
+    navigate("/result", { state: { disease: res.data.predicted_disease } });
+
+  } catch (error) {
+    console.error(error);
+    alert("Backend connected but request failed.");
+  }
+
+  setLoading(false);
+};
+;
 
   if (loading) return <Loader />;
 
