@@ -7,7 +7,6 @@ import Navbar from "./components/Navbar";
 function App() {
 return ( <Router> <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-100">
 
-```
     <Navbar />
 
     {/* Main content container */}
