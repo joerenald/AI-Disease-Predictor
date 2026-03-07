@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Loader from "./Loader";
 
+// Symptoms list (must match Flask model order)
 const symptomsList = [
   "fever",
   "cough",
@@ -16,9 +17,11 @@ const symptomsList = [
 
 function SymptomSelector() {
   const navigate = useNavigate();
+
   const [selected, setSelected] = useState({});
   const [loading, setLoading] = useState(false);
 
+  // Toggle symptom selection
   const toggleSymptom = (symptom) => {
     setSelected((prev) => ({
       ...prev,
@@ -26,42 +29,58 @@ function SymptomSelector() {
     }));
   };
 
+  // Submit symptoms to Flask backend
   const handleSubmit = async () => {
-  setLoading(true);
+    setLoading(true);
 
-  // prepare data correctly
-  const formData = {};
-  symptomsList.forEach((sym) => {
-    formData[sym] = selected[sym] ? 1 : 0;
-  });
+    // Convert UI selection → backend JSON format
+    let formData = {};
+    symptomsList.forEach((sym) => {
+      formData[sym] = selected[sym] ? 1 : 0;
+    });
 
-  try {
-    const res = await axios.post(
-      "https://ai-disease-predictor-tjnu.onrender.com/predict",
-      formData,
-      {
-        headers: { "Content-Type": "application/json" }
+    console.log("Sending data:", formData);
+
+    try {
+      const res = await axios.post(
+        "https://ai-disease-predictor-tjnu.onrender.com/predict",
+        formData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          timeout: 15000,
+        }
+      );
+
+      console.log("Server response:", res.data);
+
+      if (res.data && res.data.predicted_disease) {
+        navigate("/result", {
+          state: { disease: res.data.predicted_disease },
+        });
+      } else {
+        alert("No prediction received from server.");
       }
-    );
+    } catch (error) {
+      console.error("Backend connection error:", error);
 
-    console.log("Response:", res.data);
+      if (error.code === "ERR_NETWORK") {
+        alert("Cannot connect to Flask server.");
+      } else if (error.response) {
+        alert("Server error: " + JSON.stringify(error.response.data));
+      } else {
+        alert("Unexpected error occurred.");
+      }
+    }
 
-    navigate("/result", { state: { disease: res.data.predicted_disease } });
-
-  } catch (error) {
-    console.error(error);
-    alert("Backend connected but request failed.");
-  }
-
-  setLoading(false);
-};
-;
+    setLoading(false);
+  };
 
   if (loading) return <Loader />;
 
   return (
     <div className="bg-white/80 backdrop-blur-xl border border-blue-100 rounded-3xl shadow-2xl p-10">
-
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
 
